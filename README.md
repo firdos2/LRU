@@ -47,3 +47,40 @@ if now we will run the first API : to get value of key 1 , we won't get it as it
  now execute the API's 
  
  
+ 
+Thread Related Changes :
+ 
+I have used read/write lock to make this code thread safe.
+ 
+All the get methods will have read access , as it won't change any data and hence it won't corrupt our data when executed in   multithreaded environment.
+
+All add and update methods have write access , as if 2 or more threads execute them simultaneously there can be a race condition and our data can be corrupted and we may not end up with correct result.
+ 
+ 
+Advantages:
+
+#At a time, there can be many threads running with read lock concurrently but only one thread can acquire write lock. Hence safeguarding our data.
+
+#It saves time if many threads wants to access shared data with read access only as we are only waiting when there is a thread executing with write lock.
+
+#ReentrantReadWriteLocks improves concurrency when collections are expected to be large or accessed by more reader threads than writer threads.
+
+#ReentrantReadWriteLocks maintains faireness , as in it will give the write access to the thread whose waiting time is longest so it prevents starvation(which is possible when you use synchronize keyword).
+
+#ReentrantLock is more scalable, perform much better under higher contention. 
+
+#ReentrantLock has method lockInterruptibly() to intrupt a thread execution going on , which can be used in some cases.
+
+#ReentrantLock has method to get the number of holds on  write lock by the current thread.
+
+
+Cons 
+
+#It basically implemented by programmer , so there are chances of mistakes like forgetting to unlock the lock.
+
+#It's complicated and should be used only when there are significant number of read operation so that they can be executed concurrently.
+
+#It is slower to aquire lock as compare to acquire a simple mutex.
+
+
+ 
